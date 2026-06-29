@@ -113,6 +113,25 @@
           "default": false,
           "markdownDescription": "Disable marimo's managed Python language features (completions, diagnostics, formatting). When enabled, notebook cells use the standard `python` language ID and rely on external language servers.",
           "scope": "resource"
+        },
+        "marimo.export.autoHtml": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Automatically export marimo notebook outputs to HTML in a `__marimo__` folder next to the notebook after cell outputs change.",
+          "scope": "resource"
+        },
+        "marimo.export.autoIpynb": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Automatically export marimo notebook outputs to IPYNB in a `__marimo__` folder next to the notebook after cell outputs change.",
+          "scope": "resource"
+        },
+        "marimo.export.autoDelayMs": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 0,
+          "markdownDescription": "Delay in milliseconds before automatically exporting marimo notebook outputs after cell outputs change.",
+          "scope": "resource"
         }
       }
     },

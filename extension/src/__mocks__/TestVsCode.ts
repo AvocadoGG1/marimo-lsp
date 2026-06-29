@@ -1571,6 +1571,7 @@ export class TestVsCode extends Data.TaggedClass("TestVsCode")<{
       initialDocuments?: Array<vscode.NotebookDocument>;
       version?: string;
       fileSystem?: Map<string, Uint8Array | Error>;
+      configuration?: Record<string, unknown>;
       window?: Partial<Window>;
     } = {},
   ) {
@@ -1632,6 +1633,9 @@ export class TestVsCode extends Data.TaggedClass("TestVsCode")<{
         affinity: vscode.NotebookControllerAffinity;
       }>
     >([]);
+    const fileSystem =
+      options.fileSystem ?? new Map<string, Uint8Array | Error>();
+    const configuration = options.configuration ?? {};
 
     const runtime = yield* Effect.runtime();
 
@@ -1841,9 +1845,6 @@ export class TestVsCode extends Data.TaggedClass("TestVsCode")<{
         workspace: Workspace.make({
           fs: {
             readFile(uri: vscode.Uri) {
-              const fileSystem: Map<string, Uint8Array | Error> =
-                options.fileSystem ?? new Map();
-
               const key = uri.toString();
               const entry = fileSystem.get(key);
 
@@ -1860,7 +1861,12 @@ export class TestVsCode extends Data.TaggedClass("TestVsCode")<{
                 new FileSystemError({ cause: new Error(`ENOENT: ${key}`) }),
               );
             },
-            writeFile() {
+            writeFile(uri: vscode.Uri, contents: Uint8Array) {
+              fileSystem.set(uri.toString(), contents);
+              return Effect.succeed(true);
+            },
+            createDirectory(uri: vscode.Uri) {
+              fileSystem.set(uri.toString(), new Uint8Array());
               return Effect.succeed(true);
             },
           },
@@ -1870,10 +1876,21 @@ export class TestVsCode extends Data.TaggedClass("TestVsCode")<{
           configurationChanges() {
             return Stream.never;
           },
-          getConfiguration() {
+          getConfiguration(section: string) {
             return Effect.succeed({
-              get: () => undefined,
-              has: () => false,
+              get: <T>(key: string, defaultValue?: T) => {
+                const fullKey = section ? `${section}.${key}` : key;
+                const value = configuration[fullKey] ?? configuration[key];
+                // SAFETY: this mirrors VS Code's generic WorkspaceConfiguration.get<T>.
+                // Tests control `configuration`, so each test is responsible for
+                // providing values with the type it asks the mock to return.
+                // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+                return (value ?? defaultValue) as T;
+              },
+              has: (key: string) => {
+                const fullKey = section ? `${section}.${key}` : key;
+                return fullKey in configuration || key in configuration;
+              },
               inspect: () => undefined,
               async update() {},
             });

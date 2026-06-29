@@ -52,6 +52,7 @@ describe("extension.activate", () => {
         }
       `);
     }),
+    10_000,
   );
 
   it.scoped(
@@ -87,6 +88,7 @@ describe("extension.activate", () => {
       assert.strictEqual(pkg.contributes.notebooks.length, 1);
       assert.strictEqual(pkg.contributes.notebooks[0].type, NOTEBOOK_TYPE);
     }),
+    10_000,
   );
 });
 

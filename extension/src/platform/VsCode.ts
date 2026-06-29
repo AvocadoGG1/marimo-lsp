@@ -377,6 +377,12 @@ export class Workspace extends Effect.Service<Workspace>()("Workspace", {
             catch: (cause) => new FileSystemError({ cause }),
           });
         },
+        createDirectory(uri: vscode.Uri) {
+          return Effect.tryPromise({
+            try: () => api.fs.createDirectory(uri),
+            catch: (cause) => new FileSystemError({ cause }),
+          });
+        },
       },
       getNotebookDocuments() {
         return Effect.succeed(api.notebookDocuments);

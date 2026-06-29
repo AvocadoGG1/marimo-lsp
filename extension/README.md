@@ -52,6 +52,9 @@ icon in the editor title bar to open it as a notebook (see image above).
 | `marimo.ty.path`                        | `string`  |         | Path to a custom `ty` binary, e.g., `/usr/local/bin/ty`. Useful for offline environments. Leave empty to auto-discover or install via uv.                                                           |
 | `marimo.disableUvIntegration`           | `boolean` | `false` | Disable uv integration features such as automatic package installation prompts.                                                                                                                     |
 | `marimo.disableManagedLanguageFeatures` | `boolean` | `false` | Disable marimo's managed Python language features (completions, diagnostics, formatting). When enabled, notebook cells use the standard `python` language ID and rely on external language servers. |
+| `marimo.export.autoHtml`                | `boolean` | `false` | Automatically export notebook outputs to `__marimo__/<notebook>.html` after cell outputs change.                                                                                                    |
+| `marimo.export.autoIpynb`               | `boolean` | `false` | Automatically export notebook outputs to `__marimo__/<notebook>.ipynb` after cell outputs change.                                                                                                   |
+| `marimo.export.autoDelayMs`             | `number`  | `1000`  | Delay in milliseconds before auto-exporting after cell outputs change.                                                                                                                              |
 | `marimo.telemetry`                      | `boolean` | `true`  | Anonymous usage data. This helps us prioritize features for the marimo VSCode extension.                                                                                                            |
 
 ### Language Features
